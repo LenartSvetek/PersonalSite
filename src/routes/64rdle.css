@@ -1,0 +1,215 @@
+body { 
+    background-color: #FFFFFF;
+    margin: 0px;
+    position: relative;
+
+    overflow: hidden;
+}
+
+main {
+    
+    max-width: 1200px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+}
+
+.game {
+    flex: 1;
+}
+
+.tableRow {
+    gap: max(5px, calc((100% - (201px * 8)) / 8) );
+
+    margin-top: 20px;
+
+    &.first {
+        margin-top: 0px;
+    }
+}
+
+.table {
+    display: inline-block;
+    box-sizing: border-box;
+    height: 100%;
+    flex: 1;
+
+    container-name: gametable;
+    container-type: inline-size;
+
+    h3{
+        text-align: center;
+        margin: 0px;
+        
+    }
+
+    &.completed {
+        filter: brightness(0.6);
+    }
+
+    .progressBar {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+        gap: 4px;
+        margin: 4px 2px;
+        text-align: center;
+
+        div {
+            display: inline-block;
+            aspect-ratio: 1;
+            width: 100%;
+
+            border-radius: 5px;
+
+            box-sizing: border-box;
+            &.green {
+                background-image: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+            }
+        }
+    }
+
+    .tab {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+        background-color: black;
+        border: 1px solid black;
+        gap: 1px;
+        height: 100%;
+        width: 100%;
+        box-sizing: border-box;
+        div {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0px;
+            margin: 0px;
+            min-height: 4px;
+            min-width: 4px;
+            box-sizing: border-box;
+
+            text-transform: uppercase;
+
+            background-color: white;
+
+            font-family: monospace;
+            font-size: 100%;
+
+            aspect-ratio: 1/1;
+
+            &:empty {
+                aspect-ratio: auto;
+                min-height: 4px;
+            }
+
+            &.open {
+                aspect-ratio: 1/1;
+            }
+
+            &.correct {
+                background-color: green;
+            }
+
+            &.wrong-place {
+                background-color: orange;
+            }
+
+            &.wrong-place-last {
+                background-color: red;
+            }
+
+            &.repeats {
+                background-color: purple;
+            }
+
+            @container gametable (width < 60px) {
+                aspect-ratio: auto;
+            }
+        }
+    }
+}
+
+.toolbar {
+    margin-top: 25px;
+}
+
+.modal {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+
+    width: 100dvw;
+    height: 100dvh;
+
+    background-color: rgb(31 42 45 / 71%);
+    backdrop-filter: blur(10px);  
+
+    transition: 0.25s all;
+    
+    &.hidden {
+        top: 100dvh;
+    }
+}
+
+.jumper {
+    container-name: jumper;
+    container-type: inline-size;
+    margin-bottom: 25px;
+
+    .item {
+        box-sizing: border-box;
+        border: 1px solid black;
+        cursor: pointer;
+        > h4 {
+            margin: 5px 0px;
+            font-size: 100%;
+            text-align: center;
+            white-space: nowrap;
+        }
+    }
+
+    .state {
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+        height: 8px;
+        background-color: black;
+        gap: 1px;
+
+        box-sizing: border-box;
+        border-top: 1px solid black;
+        > div {
+            background-color: white;
+
+            &.completed {
+                background-color: green;
+            }
+
+            &.missplaced {
+                background-color: orange;
+            }
+        }
+        
+    }
+
+    @container jumper (width < 412px) {
+        .item {
+            > h4 {
+                font-size: 12px;
+            }
+        }
+    }
+}
+
+.titleRow {
+    display: flex;
+    justify-content: space-between;
+
+    h3 {
+        margin: 0px;
+    }
+
+    h5 {
+        margin:0px;
+        text-align: end;
+    }
+}
