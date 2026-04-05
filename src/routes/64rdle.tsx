@@ -49,14 +49,13 @@ function Index() {
 
         for (let i = 0; i < 8; i++) { rnd.genrand_int31() }
 
-        let answers = [];
+        let answers = new Set<string>();
         const arrAnswers = [...answerWords];
-        for (let i = 0; i < 64; i++) {
+        for (; answers.size < 64;) {
             let answer = arrAnswers[rnd.genrand_int31() % arrAnswers.length];
-            answers.push(answer);
-
+            answers.add(answer);
         }
-        return answers
+        return [...answers]
     });
     const [word, setWord] = useState<string>('');
     const [history, setHistory] = useState<string[]>(() => localStorage.getItem(`${mode}_guesses_${seed}`)?.split(`,`).filter(word => word.length == 5) || []);
