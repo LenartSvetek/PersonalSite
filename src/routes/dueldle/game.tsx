@@ -1,4 +1,3 @@
-import { usePeer } from '@api/getPeer'
 import { useConnection, type TPeerSend } from '@api/useConnect';
 import { createFileRoute } from '@tanstack/react-router'
 
