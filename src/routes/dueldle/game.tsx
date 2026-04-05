@@ -158,7 +158,7 @@ function RouteComponent() {
                     renderGame(todaysWord, user, playerGame)
                 }
                 {
-                    renderGame(todaysWord, conn?.user, opponentGame)
+                    renderGame(todaysWord, conn?.user, opponentGame, true)
                 }
             </div>
             {
@@ -206,7 +206,7 @@ function RouteComponent() {
 }
 
 
-function renderGame(gameWord: string, user: User | undefined | null, game: IGame) {
+function renderGame(gameWord: string, user: User | undefined | null, game: IGame, opponent ?: boolean) {
 
     let gameWordCC: { [key: string]: number } = {}; // todays character counter
     for (let char of gameWord) {
@@ -234,11 +234,11 @@ function renderGame(gameWord: string, user: User | undefined | null, game: IGame
                             }
 
                             return [...tmpWord].map((char, j) => {
-                                let className = '';
+                                let className = opponent && styles.filled || '';
                                 if (char === gameWord[j]) className = styles.correct;
                                 else if (gameWord.indexOf(char) >= 0 && tmpTodaysCC[char] > 0) className = styles.missplaced
 
-                                return <div className={className}>{char}</div>;
+                                return <div className={className}>{!opponent && char || ' '}</div>;
                             });
                         }
                         else if (i == game.history.length) {
@@ -247,7 +247,7 @@ function renderGame(gameWord: string, user: User | undefined | null, game: IGame
                                 if (j >= 5) return;
                                 if (!char) return <div></div>;
 
-                                return <div>{char}</div>;
+                                return <div className={opponent && styles.filled || ''}>{!opponent && char || ' '}</div>;
                             })
                         }
                         return <>

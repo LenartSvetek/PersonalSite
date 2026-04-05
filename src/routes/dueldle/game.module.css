@@ -49,6 +49,10 @@ body {
                 animation: bounce 0.25s;
             }
 
+            &.filled {
+                background-color: lightgray;
+            }
+
             &.correct {
                 background-color: green;
             }
