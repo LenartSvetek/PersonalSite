@@ -1,0 +1,35 @@
+.keyboard {
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+
+    background-color: black;
+    gap: 1px;
+    border: 1px solid black;
+
+    box-sizing: border-box;
+
+    .enter {
+        grid-row-start: span 2;
+    }
+
+    >div {
+        >button {
+            border: 0px;
+            padding: 0px;
+            outline: none;
+            background: none;
+            background-color: white;
+
+            background-repeat: no-repeat;
+
+            width: 100%;
+            height: 100%;
+
+            &:disabled {
+                color: black;
+                opacity: 0.5;
+            }
+        }
+    }
+}

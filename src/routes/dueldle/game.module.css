@@ -1,0 +1,84 @@
+body {
+    background: #181818;
+    color: white;
+}
+
+.board {
+    display: flex;
+    
+    gap: 25px;
+    justify-content: center;
+
+
+
+    h2 { 
+        text-align: center;
+    }
+
+    .game {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+        gap: 5px;
+
+        max-width: 340px;
+
+        padding-top: 25px;
+
+        > div {
+            box-sizing: border-box;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 64px;
+            height: 64px;
+
+            font-size: 2rem;
+            text-transform: uppercase;
+
+            text-align: center;
+
+            border: 2px solid lightgrey;
+
+            &:empty {
+                border: 2px solid grey;
+            }
+
+            &:not(:empty):has(~ div:empty) {
+                animation: bounce 0.25s;
+            }
+
+            &.correct {
+                background-color: green;
+            }
+
+            &.missplaced {
+                background-color: orange;
+            }
+        }
+    }
+}
+
+.keyboardcontainer {
+    height: 120px;
+    max-width: 340px;
+    margin: 0px auto;
+    margin-top: 25px;
+}
+
+.endGameCont {
+    text-align: center;
+}
+
+@keyframes bounce {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.075);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
