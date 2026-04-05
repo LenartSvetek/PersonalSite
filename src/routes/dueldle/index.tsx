@@ -1,7 +1,7 @@
 import { usePeer } from '@api/getPeer'
 import { useConnection, type TConnection, type TPeerSend } from '@api/useConnect';
 import { useUser, type User } from '@api/UserProvider';
-import { createFileRoute, useLocation, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import type { DataConnection } from 'peerjs';
 import { useEffect, useState, type ChangeEvent } from 'react';
 import { QRCodeCanvas } from 'qrcode.react';
@@ -33,8 +33,7 @@ function Index() {
     const { connectTo } = Route.useSearch();
 
     const navigate = useNavigate();
-    const location = useLocation();
-    const fullUrl = `${window.location.origin}${location.pathname}`
+    const fullUrl = `${window.location.origin}`
 
     const { data: peer, isFetching, isError } = usePeer();
     const { user, setUser } = useUser();
@@ -144,7 +143,7 @@ function Index() {
                     peer &&
                     <div style={{ background: 'white', padding: '10px', display: 'inline-block', borderRadius: '4px', margin: '0 auto' }}>
                         <QRCodeCanvas 
-                            value={`${fullUrl}?connectTo=${peer.id}` || ""}       // The data encoded in the QR code
+                            value={`${fullUrl}?game=dueldle&connectTo=${peer.id}` || ""}       // The data encoded in the QR code
                             size={200}         // Size in pixels
                             bgColor={"#ffffff"} // Background color
                             fgColor={"#000000"} // Foreground color
