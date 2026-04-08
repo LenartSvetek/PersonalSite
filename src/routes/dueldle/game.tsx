@@ -25,6 +25,17 @@ function RouteComponent() {
 
     const [playerGame, setPlayerGame] = useState<IGame>({ guess: '', history: [] });
     const [opponentGame, setOpponentGame] = useState<IGame>({ guess: '', history: [] });
+    const [keyState, setKeyState] = useState<{ [key: string]: 'found' | 'missplaced' | 'wrong' | 'unknown' }>(() => {
+        let state : { [key: string]: 'found' | 'missplaced' | 'wrong' | 'unknown' } = {};
+        for(let i = 'a'.charCodeAt(0); i < 'z'.charCodeAt(0); i++) {
+            state[String.fromCharCode(i)] = 'unknown';
+        }
+
+        state['-'] = 'unknown';
+        state['='] = 'unknown';
+
+        return state;
+    });
 
     const todaysWord = useGameStore((state) => state.targetWord);
     const gameFinished = useMemo(() => playerGame.history.length >= 6 && opponentGame.history.length >= 6 || playerGame.history.length > 0 && playerGame.history[playerGame.history.length - 1] == todaysWord || opponentGame.history.length > 0 && opponentGame.history[opponentGame.history.length - 1] == todaysWord, [playerGame, opponentGame]);
@@ -146,11 +157,56 @@ function RouteComponent() {
     }, [onWinKeyUp]);
 
     useEffect(() => {
+        if (playerGame.history.length == 0) return;
+        let word = playerGame.history.at(-1);
+        if(!word) return;
+
+        let state = { ...keyState };
+
+        let charAns: { [key: string]: number } = {};
+        for (let char of todaysWord) {
+            charAns[char] = charAns[char] && charAns[char] + 1 || 1;
+        }
+
+        let i = 0;
+        for (let char of (word)) {
+            if (char === todaysWord[i]) {
+                charAns[char] = charAns[char] - 1;
+            }
+            i++;
+        }
+
+        let tmpAns = todaysWord;
+        for (let i = 0; i < 5; i++) {
+            let char = word[i];
+            if (state[char] == 'found' || state[char] == 'wrong') continue;
+
+            if(char == todaysWord[i]) {
+                state[char] = 'found';
+                continue;
+            }
+
+            if(tmpAns.indexOf(char) > 0 && charAns[char] > 0) {
+                tmpAns = tmpAns.replace(char, ' ');
+                state[char] = 'missplaced';
+                charAns[char]--;
+                continue;
+            }
+
+            state[char] = 'wrong';
+        }
+
+        setKeyState(state);
+    }, [playerGame.history])
+
+    useEffect(() => {
         if (gameFinished) {
             window.removeEventListener('keyup', onWinKeyUp);
         }
     }, [gameFinished]);
 
+
+    console.log(keyState);
     return <>
         <div>
             <div className={styles.board}>
@@ -193,6 +249,8 @@ function RouteComponent() {
                             });
                         }}
                         onEnter={() => submitWord()}
+                        mode='dueldle'
+                        keyState={keyState}
                     ></Keyboard>
                 </div> ||
                 <div className={styles.endGameCont}>
@@ -206,7 +264,7 @@ function RouteComponent() {
 }
 
 
-function renderGame(gameWord: string, user: User | undefined | null, game: IGame, opponent ?: boolean) {
+function renderGame(gameWord: string, user: User | undefined | null, game: IGame, opponent?: boolean) {
 
     let gameWordCC: { [key: string]: number } = {}; // todays character counter
     for (let char of gameWord) {
@@ -236,7 +294,10 @@ function renderGame(gameWord: string, user: User | undefined | null, game: IGame
                             return [...tmpWord].map((char, j) => {
                                 let className = opponent && styles.filled || '';
                                 if (char === gameWord[j]) className = styles.correct;
-                                else if (gameWord.indexOf(char) >= 0 && tmpTodaysCC[char] > 0) className = styles.missplaced
+                                else if (gameWord.indexOf(char) >= 0 && tmpTodaysCC[char] > 0) {
+                                    className = styles.missplaced;
+                                    tmpTodaysCC[char]--;
+                                }
 
                                 return <div className={className}>{!opponent && char || ' '}</div>;
                             });

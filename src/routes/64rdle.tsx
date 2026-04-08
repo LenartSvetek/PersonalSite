@@ -453,7 +453,9 @@ function Index() {
                         onBackspace={() => {
                             setWord(word.substring(0, word.length - 1));
                         }}
-                        onEnter={() => submitWord()}></Keyboard>
+                        onEnter={() => submitWord()}
+                        mode='64rdle'    
+                    ></Keyboard>
                 </div>
             </div>
             <div className={`modal ${!showEndScreen && `hidden` || ``}`}>

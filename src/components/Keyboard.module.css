@@ -30,6 +30,18 @@
                 color: black;
                 opacity: 0.5;
             }
+
+            &.wrong {
+                background-color: darkslategrey;
+            }
+
+            &.missplaced {
+                background-color: orange;
+            }
+
+            &.found {
+                background-color: green;
+            }
         }
     }
 }
