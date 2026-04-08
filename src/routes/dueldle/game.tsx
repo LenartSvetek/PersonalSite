@@ -292,7 +292,7 @@ function renderGame(gameWord: string, user: User | undefined | null, game: IGame
                             }
 
                             return [...tmpWord].map((char, j) => {
-                                let className = opponent && styles.filled || '';
+                                let className = styles.filled;
                                 if (char === gameWord[j]) className = styles.correct;
                                 else if (gameWord.indexOf(char) >= 0 && tmpTodaysCC[char] > 0) {
                                     className = styles.missplaced;

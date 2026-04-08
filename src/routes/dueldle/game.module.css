@@ -50,7 +50,7 @@ body {
             }
 
             &.filled {
-                background-color: lightgray;
+                background-color: darkslategray;
             }
 
             &.correct {
