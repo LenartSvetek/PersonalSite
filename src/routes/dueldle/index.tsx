@@ -87,6 +87,21 @@ function Index() {
 
 
     useEffect(() => {
+        if(!peerId || peerId.trim().length == 0) return;
+        let url : URL;
+        try {
+            url = new URL(peerId);
+        } catch (err) {
+            return;
+        }
+
+        if(url.hash.trim().length == 0 || !url.hash.includes('?') || !url.hash.includes('connectTo=')) return;
+
+        const params = new URLSearchParams(url.hash.split('?')[1]);
+        setPeerId(params.get('connectTo') || '');
+    }, [peerId])
+
+    useEffect(() => {
         if (!conn?.conn) return;
 
         const handleClose = () => {
@@ -121,7 +136,10 @@ function Index() {
         <div className={styles.flexCenter}>
             <div className={styles.card}>
                 <input onChange={(ev) => setUser({...user, name: ev.currentTarget.value})} value={user?.name}></input>
-                <h4>Your id: {peer && peer.id}</h4>
+                {
+                    peer &&
+                    <h4 style={{cursor: 'pointer'}} onClick={() => navigator.clipboard.writeText(`${fullUrl}?connectTo=${peer.id}`)}>Your id: {peer && peer.id}</h4>
+                }
                 <div>
                     <input onChange={(ev : ChangeEvent<HTMLInputElement>) => setPeerId(ev.currentTarget.value)} value={peerId} type="text" placeholder='others id'></input>
                 </div>
@@ -144,7 +162,7 @@ function Index() {
                     peer &&
                     <div style={{ background: 'white', padding: '10px', display: 'inline-block', borderRadius: '4px', margin: '0 auto' }}>
                         <QRCodeCanvas 
-                            value={`${fullUrl}?connectTo=${peer.id}` || ""}       // The data encoded in the QR code
+                            value={`${fullUrl}?connectTo=${peer.id}`}       // The data encoded in the QR code
                             size={200}         // Size in pixels
                             bgColor={"#ffffff"} // Background color
                             fgColor={"#000000"} // Foreground color
