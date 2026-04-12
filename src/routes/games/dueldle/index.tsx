@@ -8,7 +8,7 @@ import { QRCodeCanvas } from 'qrcode.react';
 
 import { z } from 'zod';
 import { useQueryClient } from '@tanstack/react-query';
-import answerWords from '../../answerWords.tsx';
+import answerWords from '../../../answerWords.tsx';
 import { useGameStore } from '@api/useDuelStore';
 
 
@@ -18,7 +18,7 @@ const searchSchema = z.object({
   connectTo: z.string().optional(),
 })
 
-export const Route = createFileRoute('/dueldle/')({
+export const Route = createFileRoute('/games/dueldle/')({
     component: Index,
     validateSearch: (search) => searchSchema.parse(search)
 })
@@ -129,7 +129,7 @@ function Index() {
         } as TPeerSend)
 
         setTargetWord(word);
-        navigate({to: '/dueldle/game'});
+        navigate({to: '/games/dueldle/game'});
     }
 
     return (

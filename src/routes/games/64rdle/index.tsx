@@ -14,7 +14,7 @@ const getFallbackSeed = () => {
     return seed < 10 ? 10 : seed;
 };
 
-export const Route = createFileRoute('/64rdle')({
+export const Route = createFileRoute('/games/64rdle/')({
     component: Index,
     validateSearch: (search) => wordleParamSchema.parse(search),
     loaderDeps: ({search: { seed }}) => { return {seed}},
@@ -25,8 +25,8 @@ export const Route = createFileRoute('/64rdle')({
     }
 })
 
-import answerWords from '../answerWords';
-import allWords from '../allWords';
+import answerWords from '../../../answerWords';
+import allWords from '../../../allWords';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { useCallback, useEffect, useRef, useState } from 'react';
 

@@ -27,8 +27,8 @@ function Index() {
 
     return (
         <main>
-            <Link to='/64rdle' search={{mode: 'daily'}}>64rdle</Link>
-            <Link to='/dueldle'>duelde</Link>
+            <Link to='/games/64rdle' search={{mode: 'daily'}}>64rdle</Link>
+            <Link to='/games/dueldle'>duelde</Link>
         </main>
     )
 }

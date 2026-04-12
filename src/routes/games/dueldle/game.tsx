@@ -10,7 +10,7 @@ import { useUser, type User } from '@api/UserProvider.tsx';
 import Keyboard from '@components/Keyboard.tsx';
 import { useGameStore } from '@api/useDuelStore.tsx';
 
-export const Route = createFileRoute('/dueldle/game')({
+export const Route = createFileRoute('/games/dueldle/game')({
     component: RouteComponent,
 });
 

@@ -1,0 +1,29 @@
+.PartyButton {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    
+    width: 56px;
+    height: 56px;
+
+    background-color: black;
+    background-image: url('/src/assets/party.svg');
+    background-position: center;
+    background-size: 32px;
+    background-repeat: no-repeat;
+    border-radius: 15px;
+
+    cursor: pointer;
+    transition: 0.25s background-color;
+    &:hover {
+        background-color: darkslategray;
+    }
+}
+
+.PartyBox {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+
+    border-radius: 25px;
+}

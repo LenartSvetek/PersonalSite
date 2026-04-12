@@ -9,14 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as R64rdleRouteImport } from './routes/64rdle'
+import { Route as GamesRouteImport } from './routes/games'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as DueldleIndexRouteImport } from './routes/dueldle/index'
-import { Route as DueldleGameRouteImport } from './routes/dueldle/game'
+import { Route as GamesDueldleIndexRouteImport } from './routes/games/dueldle/index'
+import { Route as Games64rdleIndexRouteImport } from './routes/games/64rdle/index'
+import { Route as GamesDueldleGameRouteImport } from './routes/games/dueldle/game'
 
-const R64rdleRoute = R64rdleRouteImport.update({
-  id: '/64rdle',
-  path: '/64rdle',
+const GamesRoute = GamesRouteImport.update({
+  id: '/games',
+  path: '/games',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -24,58 +25,80 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DueldleIndexRoute = DueldleIndexRouteImport.update({
+const GamesDueldleIndexRoute = GamesDueldleIndexRouteImport.update({
   id: '/dueldle/',
   path: '/dueldle/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => GamesRoute,
 } as any)
-const DueldleGameRoute = DueldleGameRouteImport.update({
+const Games64rdleIndexRoute = Games64rdleIndexRouteImport.update({
+  id: '/64rdle/',
+  path: '/64rdle/',
+  getParentRoute: () => GamesRoute,
+} as any)
+const GamesDueldleGameRoute = GamesDueldleGameRouteImport.update({
   id: '/dueldle/game',
   path: '/dueldle/game',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => GamesRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/64rdle': typeof R64rdleRoute
-  '/dueldle/game': typeof DueldleGameRoute
-  '/dueldle/': typeof DueldleIndexRoute
+  '/games': typeof GamesRouteWithChildren
+  '/games/dueldle/game': typeof GamesDueldleGameRoute
+  '/games/64rdle/': typeof Games64rdleIndexRoute
+  '/games/dueldle/': typeof GamesDueldleIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/64rdle': typeof R64rdleRoute
-  '/dueldle/game': typeof DueldleGameRoute
-  '/dueldle': typeof DueldleIndexRoute
+  '/games': typeof GamesRouteWithChildren
+  '/games/dueldle/game': typeof GamesDueldleGameRoute
+  '/games/64rdle': typeof Games64rdleIndexRoute
+  '/games/dueldle': typeof GamesDueldleIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/64rdle': typeof R64rdleRoute
-  '/dueldle/game': typeof DueldleGameRoute
-  '/dueldle/': typeof DueldleIndexRoute
+  '/games': typeof GamesRouteWithChildren
+  '/games/dueldle/game': typeof GamesDueldleGameRoute
+  '/games/64rdle/': typeof Games64rdleIndexRoute
+  '/games/dueldle/': typeof GamesDueldleIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/64rdle' | '/dueldle/game' | '/dueldle/'
+  fullPaths:
+    | '/'
+    | '/games'
+    | '/games/dueldle/game'
+    | '/games/64rdle/'
+    | '/games/dueldle/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/64rdle' | '/dueldle/game' | '/dueldle'
-  id: '__root__' | '/' | '/64rdle' | '/dueldle/game' | '/dueldle/'
+  to:
+    | '/'
+    | '/games'
+    | '/games/dueldle/game'
+    | '/games/64rdle'
+    | '/games/dueldle'
+  id:
+    | '__root__'
+    | '/'
+    | '/games'
+    | '/games/dueldle/game'
+    | '/games/64rdle/'
+    | '/games/dueldle/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  R64rdleRoute: typeof R64rdleRoute
-  DueldleGameRoute: typeof DueldleGameRoute
-  DueldleIndexRoute: typeof DueldleIndexRoute
+  GamesRoute: typeof GamesRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/64rdle': {
-      id: '/64rdle'
-      path: '/64rdle'
-      fullPath: '/64rdle'
-      preLoaderRoute: typeof R64rdleRouteImport
+    '/games': {
+      id: '/games'
+      path: '/games'
+      fullPath: '/games'
+      preLoaderRoute: typeof GamesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -85,28 +108,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dueldle/': {
-      id: '/dueldle/'
+    '/games/dueldle/': {
+      id: '/games/dueldle/'
       path: '/dueldle'
-      fullPath: '/dueldle/'
-      preLoaderRoute: typeof DueldleIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      fullPath: '/games/dueldle/'
+      preLoaderRoute: typeof GamesDueldleIndexRouteImport
+      parentRoute: typeof GamesRoute
     }
-    '/dueldle/game': {
-      id: '/dueldle/game'
+    '/games/64rdle/': {
+      id: '/games/64rdle/'
+      path: '/64rdle'
+      fullPath: '/games/64rdle/'
+      preLoaderRoute: typeof Games64rdleIndexRouteImport
+      parentRoute: typeof GamesRoute
+    }
+    '/games/dueldle/game': {
+      id: '/games/dueldle/game'
       path: '/dueldle/game'
-      fullPath: '/dueldle/game'
-      preLoaderRoute: typeof DueldleGameRouteImport
-      parentRoute: typeof rootRouteImport
+      fullPath: '/games/dueldle/game'
+      preLoaderRoute: typeof GamesDueldleGameRouteImport
+      parentRoute: typeof GamesRoute
     }
   }
 }
 
+interface GamesRouteChildren {
+  GamesDueldleGameRoute: typeof GamesDueldleGameRoute
+  Games64rdleIndexRoute: typeof Games64rdleIndexRoute
+  GamesDueldleIndexRoute: typeof GamesDueldleIndexRoute
+}
+
+const GamesRouteChildren: GamesRouteChildren = {
+  GamesDueldleGameRoute: GamesDueldleGameRoute,
+  Games64rdleIndexRoute: Games64rdleIndexRoute,
+  GamesDueldleIndexRoute: GamesDueldleIndexRoute,
+}
+
+const GamesRouteWithChildren = GamesRoute._addFileChildren(GamesRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  R64rdleRoute: R64rdleRoute,
-  DueldleGameRoute: DueldleGameRoute,
-  DueldleIndexRoute: DueldleIndexRoute,
+  GamesRoute: GamesRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
