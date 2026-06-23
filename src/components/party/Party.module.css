@@ -1,5 +1,5 @@
 .PartyButton {
-    position: fixed;
+    position: absolute;
     bottom: 25px;
     right: 25px;
     
@@ -15,15 +15,43 @@
 
     cursor: pointer;
     transition: 0.25s background-color;
-    &:hover {
+    &.openParty, &:hover {
         background-color: darkslategray;
     }
 }
 
+.PartyContainer {
+    position: absolute;
+    
+    left: 0px;
+    top: 0px;
+
+    width: 100dvw;
+    height: 100dvh;
+}
+
 .PartyBox {
-    position: fixed;
-    bottom: 25px;
+    position: absolute;
+
+    bottom: 91px;
     right: 25px;
 
-    border-radius: 25px;
+    min-width: 240px;
+    max-width: 290px;
+
+    background-color: darkslategray;
+
+    padding: 25px;
+    border-radius: 15px;
+
+    input[type="text"] {
+        box-sizing: border-box;
+        margin: 0px;
+
+        width: 100%;
+
+        padding: 5px;
+        border: none;
+        border-radius: 7px;
+    }
 }

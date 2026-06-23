@@ -11,8 +11,11 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as GamesRouteImport } from './routes/games'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as GamesIndexRouteImport } from './routes/games/index'
+import { Route as GamesSuperSodokuIndexRouteImport } from './routes/games/superSodoku/index'
 import { Route as GamesDueldleIndexRouteImport } from './routes/games/dueldle/index'
 import { Route as Games64rdleIndexRouteImport } from './routes/games/64rdle/index'
+import { Route as GamesSuperSodokuGameRouteImport } from './routes/games/superSodoku/game'
 import { Route as GamesDueldleGameRouteImport } from './routes/games/dueldle/game'
 
 const GamesRoute = GamesRouteImport.update({
@@ -25,6 +28,16 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GamesIndexRoute = GamesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => GamesRoute,
+} as any)
+const GamesSuperSodokuIndexRoute = GamesSuperSodokuIndexRouteImport.update({
+  id: '/superSodoku/',
+  path: '/superSodoku/',
+  getParentRoute: () => GamesRoute,
+} as any)
 const GamesDueldleIndexRoute = GamesDueldleIndexRouteImport.update({
   id: '/dueldle/',
   path: '/dueldle/',
@@ -33,6 +46,11 @@ const GamesDueldleIndexRoute = GamesDueldleIndexRouteImport.update({
 const Games64rdleIndexRoute = Games64rdleIndexRouteImport.update({
   id: '/64rdle/',
   path: '/64rdle/',
+  getParentRoute: () => GamesRoute,
+} as any)
+const GamesSuperSodokuGameRoute = GamesSuperSodokuGameRouteImport.update({
+  id: '/superSodoku/game',
+  path: '/superSodoku/game',
   getParentRoute: () => GamesRoute,
 } as any)
 const GamesDueldleGameRoute = GamesDueldleGameRouteImport.update({
@@ -44,47 +62,63 @@ const GamesDueldleGameRoute = GamesDueldleGameRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/games': typeof GamesRouteWithChildren
+  '/games/': typeof GamesIndexRoute
   '/games/dueldle/game': typeof GamesDueldleGameRoute
+  '/games/superSodoku/game': typeof GamesSuperSodokuGameRoute
   '/games/64rdle/': typeof Games64rdleIndexRoute
   '/games/dueldle/': typeof GamesDueldleIndexRoute
+  '/games/superSodoku/': typeof GamesSuperSodokuIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/games': typeof GamesRouteWithChildren
+  '/games': typeof GamesIndexRoute
   '/games/dueldle/game': typeof GamesDueldleGameRoute
+  '/games/superSodoku/game': typeof GamesSuperSodokuGameRoute
   '/games/64rdle': typeof Games64rdleIndexRoute
   '/games/dueldle': typeof GamesDueldleIndexRoute
+  '/games/superSodoku': typeof GamesSuperSodokuIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/games': typeof GamesRouteWithChildren
+  '/games/': typeof GamesIndexRoute
   '/games/dueldle/game': typeof GamesDueldleGameRoute
+  '/games/superSodoku/game': typeof GamesSuperSodokuGameRoute
   '/games/64rdle/': typeof Games64rdleIndexRoute
   '/games/dueldle/': typeof GamesDueldleIndexRoute
+  '/games/superSodoku/': typeof GamesSuperSodokuIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/games'
+    | '/games/'
     | '/games/dueldle/game'
+    | '/games/superSodoku/game'
     | '/games/64rdle/'
     | '/games/dueldle/'
+    | '/games/superSodoku/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/games'
     | '/games/dueldle/game'
+    | '/games/superSodoku/game'
     | '/games/64rdle'
     | '/games/dueldle'
+    | '/games/superSodoku'
   id:
     | '__root__'
     | '/'
     | '/games'
+    | '/games/'
     | '/games/dueldle/game'
+    | '/games/superSodoku/game'
     | '/games/64rdle/'
     | '/games/dueldle/'
+    | '/games/superSodoku/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -108,6 +142,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/games/': {
+      id: '/games/'
+      path: '/'
+      fullPath: '/games/'
+      preLoaderRoute: typeof GamesIndexRouteImport
+      parentRoute: typeof GamesRoute
+    }
+    '/games/superSodoku/': {
+      id: '/games/superSodoku/'
+      path: '/superSodoku'
+      fullPath: '/games/superSodoku/'
+      preLoaderRoute: typeof GamesSuperSodokuIndexRouteImport
+      parentRoute: typeof GamesRoute
+    }
     '/games/dueldle/': {
       id: '/games/dueldle/'
       path: '/dueldle'
@@ -122,6 +170,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Games64rdleIndexRouteImport
       parentRoute: typeof GamesRoute
     }
+    '/games/superSodoku/game': {
+      id: '/games/superSodoku/game'
+      path: '/superSodoku/game'
+      fullPath: '/games/superSodoku/game'
+      preLoaderRoute: typeof GamesSuperSodokuGameRouteImport
+      parentRoute: typeof GamesRoute
+    }
     '/games/dueldle/game': {
       id: '/games/dueldle/game'
       path: '/dueldle/game'
@@ -133,15 +188,21 @@ declare module '@tanstack/react-router' {
 }
 
 interface GamesRouteChildren {
+  GamesIndexRoute: typeof GamesIndexRoute
   GamesDueldleGameRoute: typeof GamesDueldleGameRoute
+  GamesSuperSodokuGameRoute: typeof GamesSuperSodokuGameRoute
   Games64rdleIndexRoute: typeof Games64rdleIndexRoute
   GamesDueldleIndexRoute: typeof GamesDueldleIndexRoute
+  GamesSuperSodokuIndexRoute: typeof GamesSuperSodokuIndexRoute
 }
 
 const GamesRouteChildren: GamesRouteChildren = {
+  GamesIndexRoute: GamesIndexRoute,
   GamesDueldleGameRoute: GamesDueldleGameRoute,
+  GamesSuperSodokuGameRoute: GamesSuperSodokuGameRoute,
   Games64rdleIndexRoute: Games64rdleIndexRoute,
   GamesDueldleIndexRoute: GamesDueldleIndexRoute,
+  GamesSuperSodokuIndexRoute: GamesSuperSodokuIndexRoute,
 }
 
 const GamesRouteWithChildren = GamesRoute._addFileChildren(GamesRouteChildren)

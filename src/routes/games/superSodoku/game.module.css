@@ -1,0 +1,33 @@
+.gametable {
+    --sudoku-cell-hover-colour: lightgray;
+
+    display: grid;
+    
+    grid-template-columns: 1fr 1fr 1fr;
+
+    aspect-ratio: 1;
+
+    max-width: 100dvw;
+    max-height: 100dvh;
+
+    gap: 5px;
+
+    background-color: black;
+
+    > div {
+        background-color: white;
+        padding: 25px;
+
+        & .lastItem {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            box-sizing: border-box;
+
+            &:hover {
+                background-color: var(--sudoku-cell-hover-colour);
+            }
+        }
+    }
+}
