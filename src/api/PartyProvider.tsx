@@ -1,9 +1,9 @@
 import { type DataConnection, Peer } from 'peerjs';
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 import { useUser, type User } from './UserProvider';
 import { usePeer } from './getPeer';
 
-export type TPeerSend = { type: "Request", data: User } | { type: "Accept", data: any } | { type: 'Refuse', data: any } | { type: 'Data', data: any } | { type: 'Joined', data: ConnUser[]} | { type: 'Left', data: ConnUser[]};
+export type TPeerSend = { type: "Request", data: User } | { type: "Accept", data: any } | { type: 'Refuse', data: any } | { type: 'Data', data: any } | { type: 'Joined', data: ConnUser[]} | { type: 'Left', data: ConnUser[]} | { type: 'Disband', data: any };
 export type TConnection = { user?: ConnUser, conn: DataConnection } | null;
 
 export interface ConnUser {
@@ -34,8 +34,11 @@ interface PartyContextType {
     refuseRequest: (user: ConnUser) => Promise<void>;
     acceptRequest: (user: ConnUser) => Promise<void>;
     joinParty: (partyId?: string) => Promise<void>;
+    leaveParty: () => Promise<void>;
+    registerOnData: (callback: DataCallback) => () => void; 
 }
 
+export type DataCallback = (data: any, senderId: string) => void;
 
 // 2. Create the Context
 const PartyContext = createContext<PartyContextType | undefined>(undefined);
@@ -49,6 +52,17 @@ export const PartyProvider = ({ children }: { children: ReactNode }) => {
     const [conn, setConn] = useState<DataConnection | null>(null);
     const [incomingConn, setIncommingConn] = useState<Map<string, ConnUser>>(new Map());
 
+    const dataListenersRef = useRef<Set<DataCallback>>(new Set());
+
+    // Register method to be called by consuming components/hooks
+    const registerOnData = useCallback((callback: DataCallback) => {
+        dataListenersRef.current.add(callback);
+        // Return unsubscribe function
+        return () => {
+            dataListenersRef.current.delete(callback);
+        };
+    }, []);
+
     useEffect(() => {
         if(peer) setStage('NoParty');
     }, [peer]);
@@ -60,13 +74,33 @@ export const PartyProvider = ({ children }: { children: ReactNode }) => {
     const handleConnection = (conn : DataConnection) => {
         conn.on('data', (data) => {
             let _data = data as TPeerSend;
-
+            console.log('received data: ', _data);
             switch(_data.type) {
                 case 'Request': 
-                    let tmpCons = new Map(incomingConn);
-                    if(tmpCons.has(_data.data.id)) tmpCons.delete(_data.data.id);
-                    tmpCons.set(_data.data.id, { user: _data.data, conn });
-                    setIncommingConn(tmpCons);
+                    setIncommingConn(conns => {
+                        let tmpCons = new Map([...conns]);
+                        console.log([...tmpCons]);
+                        if(tmpCons.has(_data.data.id)) tmpCons.delete(_data.data.id);
+                        tmpCons.set(_data.data.id, { user: _data.data, conn });
+                        console.log([...tmpCons]);
+                        return tmpCons
+                    });
+                    break;
+                case 'Left':
+                    _setParty(party => {
+                        let tmpParty = { ...party } as Party;
+                        let members = party?.members.filter((m) => !_data.data.find(lm => m.user.id == lm.user.id)) || [];
+                        tmpParty.members = members;
+
+                        for(let member of tmpParty.members) {
+                            member.conn?.send({
+                                type: 'Left',
+                                data: _data.data
+                            } as TPeerSend);
+                        }
+
+                        return tmpParty;
+                    });
                     break;
             }
         })
@@ -102,14 +136,6 @@ export const PartyProvider = ({ children }: { children: ReactNode }) => {
             } as TPeerSend);
         }
 
-        console.log('sending data',{
-            type: 'Accept',
-            data: {
-                role: 'member',
-                leader: { user: party.me.user },
-                members: party?.members.map(m => { return { user: m.user } })
-            } as Party
-        });
         await user.conn.send({
             type: 'Accept',
             data: {
@@ -120,7 +146,7 @@ export const PartyProvider = ({ children }: { children: ReactNode }) => {
         } as TPeerSend);
 
         console.log("strtingifz", party);
-        let tmpParty = JSON.parse(JSON.stringify(party)) as Party;
+        let tmpParty = {...party};
         console.log("it stringigfied");
         tmpParty.members.push(user);
         setParty(tmpParty);
@@ -172,6 +198,8 @@ export const PartyProvider = ({ children }: { children: ReactNode }) => {
             }, 10000);
 
             conn.on('open', async () => {
+                setConn(conn);
+
                 conn.send({
                     type: 'Request',
                     data: user
@@ -182,6 +210,7 @@ export const PartyProvider = ({ children }: { children: ReactNode }) => {
 
                     if (_data.type == 'Refuse') {
                         conn.close();
+                        setConn(null);
                         clearTimeout(timeout);
                         setStage('NoParty');
                         return;
@@ -192,13 +221,37 @@ export const PartyProvider = ({ children }: { children: ReactNode }) => {
                         setStage('Party');
                         return;
                     }
+
+                    if(_data.type == "Joined") {
+                        _setParty(party => {
+                            let tmpParty = {...party} as Party;
+                            let members = _data.data.filter(im => !party?.members.find(m => m.user.id == im.user.id));
+                            tmpParty.members?.push(...members);
+                            return tmpParty;
+                        });
+                    }
+
+                    if(_data.type == 'Left') {
+                        _setParty(party => {
+                        let tmpParty = { ...party } as Party;
+                        let members = party?.members.filter((m) => !_data.data.find(lm => m.user.id == lm.user.id)) || [];
+                        tmpParty.members = members;
+
+                        return tmpParty;
+                    });
+                    }
                 });
 
             });
 
             conn.on('error', (err: any) => {
                 clearTimeout(timeout);
+                setConn(null);
             });
+
+            conn.on('close', () => {
+                setConn(null);
+            }) ;
 
             return conn;
         };
@@ -207,10 +260,22 @@ export const PartyProvider = ({ children }: { children: ReactNode }) => {
         setStage('WaitingForRequestReply');
     };
 
+    const leaveParty = useCallback(async () => {
+        if(party?.role == 'leader') return;
+        console.log('i am leaving party: ', party);
+        console.log(conn);
+        await conn?.send({ type: 'Left', data: [ { user } ] } as TPeerSend);
+
+
+        setStage('NoParty');
+        _setParty(null);
+        conn?.close();
+    }, [party]);
+
     const getPartyId = () => peer?.id || '';
 
     return (
-        <PartyContext.Provider value={{ party, setParty, createParty, joinParty, stage, incomingRequst: [...incomingConn].map(conn => conn[1]), refuseRequest, acceptRequest, getPartyId }}>
+        <PartyContext.Provider value={{ party, setParty, createParty, joinParty, stage, incomingRequst: [...incomingConn].map(conn => conn[1]), refuseRequest, acceptRequest, getPartyId, leaveParty, registerOnData }}>
             {children}
         </PartyContext.Provider>
     );

@@ -8,7 +8,7 @@ import { useUser } from "@api/UserProvider";
 
 export function Party() {
     const { user, setUsername} = useUser();
-    const { party, createParty, stage, joinParty, incomingRequst, acceptRequest, refuseRequest, getPartyId } = useParty();
+    const { party, createParty, stage, joinParty, incomingRequst, acceptRequest, refuseRequest, getPartyId, leaveParty } = useParty();
     const [ isOpen, setOpen ] = useState(false);
     
 
@@ -68,6 +68,7 @@ export function Party() {
                         stage == 'Party' &&
                         <>
                             <div>Party id: <br></br>{party?.role == 'leader' && getPartyId() || party?.leader?.user.name || ""}</div>
+                            <button type="button" onClick={leaveParty}>leave party</button>
                             <div>Party memebers:</div>
                             {
                                 party?.role == 'member' &&
