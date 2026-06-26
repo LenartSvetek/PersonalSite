@@ -8,6 +8,6 @@ function RouteComponent() {
   return <main>
               <Link to='/games/64rdle' search={{mode: 'daily'}}>64rdle</Link>
               <Link to='/games/dueldle'>duelde</Link>
-              {/* <Link to='/games/superSodoku'>super sodoku</Link> */}
+              {/* <Link to='/games/superSodoku'>ultimate tic tac toe</Link> */}
           </main>
 }

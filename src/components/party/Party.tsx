@@ -8,11 +8,14 @@ import { useUser } from "@api/UserProvider";
 
 export function Party() {
     const { user, setUsername} = useUser();
-    const { party, createParty, stage, joinParty, incomingRequst, acceptRequest, refuseRequest, getPartyId, leaveParty } = useParty();
+    const { party, createParty, stage, joinParty, incomingRequst, acceptRequest, refuseRequest, getPartyId, leaveParty, broadcast,registerOnData } = useParty();
     const [ isOpen, setOpen ] = useState(false);
     
 
     const partyIdInputRef = useRef<HTMLInputElement>(null);
+    registerOnData((data, senderId) => {
+        console.log(`[${senderId}] `, data);
+    })
 
     // useEffect(() => {
     //     const fetchPartyData = async () => {
@@ -101,6 +104,10 @@ export function Party() {
                                     </div>
                                 </>
                             }
+                            <div>Debug: </div>
+                            <div>
+                                <button type="button" onClick={() => broadcast(`Hello! I am ${user.name}}`, user.id)}>Say hello!</button>
+                            </div>
                         </>
                     }
                 </div>
